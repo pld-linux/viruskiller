@@ -1,0 +1,57 @@
+--- viruskiller-1.03/makefile~	2010-09-06 22:05:59.280483808 +0200
++++ viruskiller-1.03/makefile	2010-09-06 22:05:57.193761617 +0200
+@@ -8,7 +8,7 @@
+ USEPAK = 1
+ 
+ PREFIX=$(DESTDIR)/usr
+-BINDIR = $(PREFIX)/games/
++BINDIR = $(PREFIX)/bin/
+ DATADIR = $(PREFIX)/share/games/$(PROG)/
+ DOCDIR = $(PREFIX)/share/doc/$(PROG)/
+ ICONDIR = $(PREFIX)/share/icons/hicolor/
+@@ -19,6 +19,7 @@
+ 
+ SAFEDIR = /tmp/
+ 
++CFLAGS += $(OPTFLAGS)
+ CFLAGS += `sdl-config --cflags` -DVERSION=$(VERSION) -DRELEASE=$(RELEASE) -DUSEPAK=$(USEPAK)
+ CFLAGS += -DPAKNAME=\"$(PAKNAME)\" -DPAKLOCATION=\"$(DATADIR)\" -DSAFEDIR=\"$(SAFEDIR)\" -DUNIX -DGAMEPLAYMANUAL=\"$(DOCDIR)manual.html\" -Wall
+ CFLAGS += -DMEDAL_SERVER_HOST=\"$(MEDAL_SERVER_HOST)\" -DMEDAL_SERVER_PORT=$(MEDAL_SERVER_PORT)
+@@ -62,10 +63,10 @@
+ 
+ # linking the program.
+ $(PROG): $(OBJS)
+-	$(CXX) $(LIBS) $(OBJS) -o $(PROG)
++	$(CXX) $(LDFLAGS) $(OBJS) -o $(PROG) $(LIBS) -lz
+ 	
+ pak: $(PAKOBJS)
+-	$(CXX) $(LIBS) $(PAKOBJS) -o pak
++	$(CXX) $(LDFLAGS) $(PAKOBJS) -o pak $(LIBS) -lz
+ 
+ # cleaning everything that can be automatically recreated with "make".
+ clean:
+@@ -81,15 +82,13 @@
+ 
+ 	mkdir -p $(BINDIR)
+ 	mkdir -p $(DATADIR)
+-	mkdir -p $(DOCDIR)
+ 	mkdir -p $(ICONDIR)16x16/apps
+ 	mkdir -p $(ICONDIR)32x32/apps
+ 	mkdir -p $(ICONDIR)64x64/apps
+ 	mkdir -p $(DESKTOPDIR)
+ 
+-	install -o root -g games -m 755 $(PROG) $(BINDIR)$(PROG)
+-	install -o root -g games -m 644 $(PAKNAME) $(DATADIR)$(PAKNAME)
+-	install -o root -g games -m 644 $(DOCS) $(DOCDIR)
++	install $(PROG) $(BINDIR)$(PROG)
++	install $(PAKNAME) $(DATADIR)$(PAKNAME)
+ 	cp $(ICONS)$(PROG).png $(ICONDIR)32x32/apps/
+ 	cp $(ICONS)$(PROG)-mini.png $(ICONDIR)16x16/apps/$(PROG).png
+ 	cp $(ICONS)$(PROG)-large.png $(ICONDIR)64x64/apps/$(PROG).png
+@@ -104,4 +103,4 @@
+ 	$(RM) $(ICONDIR)32x32/apps/$(PROG).png
+ 	$(RM) $(ICONDIR)64x64/apps/$(PROG).png
+ 	$(RM) $(DESKTOPDIR)$(PROG).desktop
+-	
+\ Brak znaku nowej linii na końcu pliku
++	
